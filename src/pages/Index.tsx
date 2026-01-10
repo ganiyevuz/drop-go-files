@@ -1,5 +1,6 @@
 import { DropZone } from '@/components/DropZone';
 import { FileList } from '@/components/FileList';
+import { ThemeToggle } from '@/components/ThemeToggle';
 import { useFileUpload } from '@/hooks/useFileUpload';
 import { Cloud } from 'lucide-react';
 
@@ -18,6 +19,11 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      {/* Theme Toggle */}
+      <div className="absolute top-6 right-6">
+        <ThemeToggle />
+      </div>
+
       <div className="max-w-4xl mx-auto px-6 py-12">
         {/* Header */}
         <div className="text-center mb-12">
