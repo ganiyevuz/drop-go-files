@@ -6,11 +6,10 @@ import {
   Check, 
   AlertCircle, 
   RefreshCw,
-  File,
-  Folder,
   Download
 } from 'lucide-react';
 import { UploadFile } from '@/types/upload';
+import { FileIcon } from './FileIcon';
 
 interface FileProgressProps {
   file: UploadFile;
@@ -63,30 +62,28 @@ export const FileProgress: React.FC<FileProgressProps> = ({
     return 'bg-progress-fill';
   };
 
-  const getStatusIcon = () => {
+  const getFileIcon = () => {
     if (isCompleted) {
       return (
-        <div className="p-2 rounded-full bg-success/10">
-          <Check className="w-4 h-4 text-success" />
+        <div className="relative">
+          <FileIcon fileName={file.name} previewUrl={file.url} size="md" />
+          <div className="absolute -bottom-1 -right-1 p-0.5 rounded-full bg-success">
+            <Check className="w-3 h-3 text-success-foreground" />
+          </div>
         </div>
       );
     }
     if (isError) {
       return (
-        <div className="p-2 rounded-full bg-destructive/10">
-          <AlertCircle className="w-4 h-4 text-destructive" />
+        <div className="relative">
+          <FileIcon fileName={file.name} size="md" />
+          <div className="absolute -bottom-1 -right-1 p-0.5 rounded-full bg-destructive">
+            <AlertCircle className="w-3 h-3 text-destructive-foreground" />
+          </div>
         </div>
       );
     }
-    return (
-      <div className="p-2 rounded-full bg-muted">
-        {file.path ? (
-          <Folder className="w-4 h-4 text-muted-foreground" />
-        ) : (
-          <File className="w-4 h-4 text-muted-foreground" />
-        )}
-      </div>
-    );
+    return <FileIcon fileName={file.name} previewUrl={file.url} size="md" />;
   };
 
   const handleDownload = () => {
@@ -103,7 +100,7 @@ export const FileProgress: React.FC<FileProgressProps> = ({
   return (
     <div className="bg-card border border-border rounded-lg p-4 animate-slide-up hover:shadow-md transition-shadow">
       <div className="flex items-center gap-4">
-        {getStatusIcon()}
+        {getFileIcon()}
         
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between mb-1">
