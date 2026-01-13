@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { FileProgress } from './FileProgress';
 import { UploadFile } from '@/types/upload';
 import { Pause, Play, Trash2 } from 'lucide-react';
@@ -24,6 +25,7 @@ export const FileList: React.FC<FileListProps> = ({
   onResumeAll,
   onClearCompleted,
 }) => {
+  const { t } = useTranslation();
   const uploadingCount = files.filter((f) => f.status === 'uploading').length;
   const pausedCount = files.filter((f) => f.status === 'paused').length;
   const completedCount = files.filter((f) => f.status === 'completed').length;
@@ -43,14 +45,14 @@ export const FileList: React.FC<FileListProps> = ({
       <div className="flex items-center justify-between mb-6">
         <div>
           <h2 className="text-lg font-semibold text-foreground">
-            Upload Progress
+            {t('fileList.title')}
           </h2>
           <p className="text-sm text-muted-foreground">
-            {totalCount} file{totalCount !== 1 ? 's' : ''} • {completedCount} completed • {uploadingCount} uploading
-            {pausedCount > 0 && ` • ${pausedCount} paused`}
+            {totalCount} {t('fileList.files')} • {completedCount} {t('fileProgress.completed').toLowerCase()} • {uploadingCount} {t('fileProgress.uploading').toLowerCase()}
+            {pausedCount > 0 && ` • ${pausedCount} ${t('fileProgress.paused').toLowerCase()}`}
           </p>
         </div>
-        
+
         <div className="flex items-center gap-2">
           {uploadingCount > 0 && (
             <button
@@ -58,27 +60,27 @@ export const FileList: React.FC<FileListProps> = ({
               className="flex items-center gap-2 px-4 py-2 rounded-lg bg-warning/10 text-warning hover:bg-warning/20 transition-colors text-sm font-medium"
             >
               <Pause className="w-4 h-4" />
-              Pause All
+              {t('fileList.pauseAll')}
             </button>
           )}
-          
+
           {pausedCount > 0 && (
             <button
               onClick={onResumeAll}
               className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 transition-colors text-sm font-medium"
             >
               <Play className="w-4 h-4" />
-              Resume All
+              {t('fileList.resumeAll')}
             </button>
           )}
-          
+
           {completedCount > 0 && (
             <button
               onClick={onClearCompleted}
               className="flex items-center gap-2 px-4 py-2 rounded-lg bg-secondary text-secondary-foreground hover:bg-secondary/80 transition-colors text-sm font-medium"
             >
               <Trash2 className="w-4 h-4" />
-              Clear Completed
+              {t('fileList.clearCompleted')}
             </button>
           )}
         </div>
@@ -87,7 +89,7 @@ export const FileList: React.FC<FileListProps> = ({
       {/* Overall Progress */}
       <div className="mb-6 p-4 bg-card border border-border rounded-lg">
         <div className="flex items-center justify-between mb-2">
-          <span className="text-sm font-medium text-foreground">Overall Progress</span>
+          <span className="text-sm font-medium text-foreground">{t('fileList.overallProgress')}</span>
           <span className="text-sm font-semibold text-primary">{totalProgress}%</span>
         </div>
         <div className="h-3 bg-progress-bg rounded-full overflow-hidden">

@@ -1,10 +1,11 @@
 import React from 'react';
-import { 
-  Pause, 
-  Play, 
-  X, 
-  Check, 
-  AlertCircle, 
+import { useTranslation } from 'react-i18next';
+import {
+  Pause,
+  Play,
+  X,
+  Check,
+  AlertCircle,
   RefreshCw,
   Download
 } from 'lucide-react';
@@ -49,6 +50,7 @@ export const FileProgress: React.FC<FileProgressProps> = ({
   onCancel,
   onRetry,
 }) => {
+  const { t } = useTranslation();
   const isUploading = file.status === 'uploading';
   const isPaused = file.status === 'paused';
   const isCompleted = file.status === 'completed';
@@ -136,11 +138,11 @@ export const FileProgress: React.FC<FileProgressProps> = ({
           <div className="flex items-center justify-between mt-1">
             <div className="flex items-center gap-3">
               <span className="text-xs text-muted-foreground">
-                {isCompleted && 'Completed'}
-                {isPaused && 'Paused'}
-                {isUploading && 'Uploading...'}
-                {isQueued && 'Queued'}
-                {isError && (file.error || 'Upload failed')}
+                {isCompleted && t('fileProgress.completed')}
+                {isPaused && t('fileProgress.paused')}
+                {isUploading && t('fileProgress.uploading')}
+                {isQueued && t('fileProgress.queued')}
+                {isError && (file.error || t('fileProgress.uploadFailed'))}
               </span>
               {isUploading && file.speed > 0 && (
                 <span className="text-xs font-medium text-primary">
@@ -149,7 +151,7 @@ export const FileProgress: React.FC<FileProgressProps> = ({
               )}
               {isUploading && file.eta > 0 && (
                 <span className="text-xs text-muted-foreground">
-                  ETA: {formatTime(file.eta)}
+                  {t('fileProgress.eta')}: {formatTime(file.eta)}
                 </span>
               )}
             </div>
@@ -165,17 +167,17 @@ export const FileProgress: React.FC<FileProgressProps> = ({
             <button
               onClick={handleDownload}
               className="p-2 rounded-lg hover:bg-success/10 transition-colors"
-              title="Download"
+              title={t('actions.download')}
             >
               <Download className="w-4 h-4 text-success" />
             </button>
           )}
-          
+
           {(isUploading || isPaused) && (
             <button
               onClick={isPaused ? onResume : onPause}
               className="p-2 rounded-lg hover:bg-secondary transition-colors"
-              title={isPaused ? 'Resume' : 'Pause'}
+              title={isPaused ? t('actions.resume') : t('actions.pause')}
             >
               {isPaused ? (
                 <Play className="w-4 h-4 text-primary" />
@@ -184,21 +186,21 @@ export const FileProgress: React.FC<FileProgressProps> = ({
               )}
             </button>
           )}
-          
+
           {isError && (
             <button
               onClick={onRetry}
               className="p-2 rounded-lg hover:bg-secondary transition-colors"
-              title="Retry"
+              title={t('actions.retry')}
             >
               <RefreshCw className="w-4 h-4 text-primary" />
             </button>
           )}
-          
+
           <button
             onClick={onCancel}
             className="p-2 rounded-lg hover:bg-destructive/10 transition-colors"
-            title="Remove"
+            title={t('actions.remove')}
           >
             <X className="w-4 h-4 text-destructive" />
           </button>

@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Upload, FolderUp } from 'lucide-react';
 
 interface DropZoneProps {
@@ -6,6 +7,7 @@ interface DropZoneProps {
 }
 
 export const DropZone: React.FC<DropZoneProps> = ({ onFilesSelected }) => {
+  const { t } = useTranslation();
   const [isDragActive, setIsDragActive] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const folderInputRef = useRef<HTMLInputElement>(null);
@@ -55,7 +57,7 @@ export const DropZone: React.FC<DropZoneProps> = ({ onFilesSelected }) => {
         } else if (entry.isDirectory) {
           const dirEntry = entry as FileSystemDirectoryEntry;
           const reader = dirEntry.createReader();
-          
+
           return new Promise((resolve) => {
             const readEntries = () => {
               reader.readEntries(async (entries) => {
@@ -110,8 +112,8 @@ export const DropZone: React.FC<DropZoneProps> = ({ onFilesSelected }) => {
     <div
       className={`
         relative border-2 border-dashed rounded-xl p-12 transition-all duration-300 ease-out
-        ${isDragActive 
-          ? 'border-primary bg-dropzone-bg-active scale-[1.02] shadow-lg shadow-primary/10' 
+        ${isDragActive
+          ? 'border-primary bg-dropzone-bg-active scale-[1.02] shadow-lg shadow-primary/10'
           : 'border-border bg-dropzone-bg hover:border-primary/50 hover:bg-dropzone-bg-active/50'
         }
       `}
@@ -127,13 +129,13 @@ export const DropZone: React.FC<DropZoneProps> = ({ onFilesSelected }) => {
         `}>
           <Upload className="w-12 h-12 text-primary" />
         </div>
-        
+
         <div className="text-center">
           <h3 className="text-xl font-semibold text-foreground mb-2">
-            {isDragActive ? 'Drop files here' : 'Drag & drop files or folders'}
+            {t('dropzone.title')}
           </h3>
           <p className="text-muted-foreground">
-            or use the buttons below to select
+            {t('dropzone.subtitle')}
           </p>
         </div>
 
@@ -148,9 +150,9 @@ export const DropZone: React.FC<DropZoneProps> = ({ onFilesSelected }) => {
             "
           >
             <Upload className="w-5 h-5" />
-            Select Files
+            {t('dropzone.selectFiles')}
           </button>
-          
+
           <button
             onClick={() => folderInputRef.current?.click()}
             className="
@@ -161,7 +163,7 @@ export const DropZone: React.FC<DropZoneProps> = ({ onFilesSelected }) => {
             "
           >
             <FolderUp className="w-5 h-5" />
-            Select Folder
+            {t('dropzone.selectFolder')}
           </button>
         </div>
 

@@ -1,3 +1,8 @@
+# Uploaded files
+data/uploads/*
+!data/uploads/.gitkeep
+backup.tar.gz
+
 # Logs
 logs
 *.log
