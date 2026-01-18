@@ -5,13 +5,10 @@ services:
       dockerfile: Dockerfile
     container_name: dropgo-backend
     restart: unless-stopped
-    ports:
-      - "1080:1080"
     environment:
       - PORT=1080
       - UPLOAD_DIR=/app/uploads
     volumes:
-      # Bind mount - files stored on your machine at ./data/uploads
       - ./data/uploads:/app/uploads
     networks:
       - dropgo-network
@@ -27,10 +24,25 @@ services:
       dockerfile: Dockerfile
     container_name: dropgo-frontend
     restart: unless-stopped
-    ports:
-      - "8080:80"
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
+    networks:
+      - dropgo-network
+
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    container_name: dropgo-cloudflared
+    restart: unless-stopped
+    command: tunnel run
+    depends_on:
+      backend:
+        condition: service_healthy
+      frontend:
+        condition: service_started
+    volumes:
+      - ./cloudflared/config.yml:/etc/cloudflared/config.yml:ro
+      - ./cloudflared:/etc/cloudflared:ro
     networks:
       - dropgo-network
 

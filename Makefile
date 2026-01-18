@@ -1,88 +1,111 @@
-.PHONY: help up down build rebuild logs logs-backend logs-frontend shell-backend shell-frontend clean dev dev-backend dev-frontend stop ps backup restore
+.PHONY: help up down build rebuild logs logs-backend logs-frontend logs-tunnel \
+        shell-backend shell-frontend shell-tunnel clean clean-all dev dev-backend dev-frontend \
+        stop ps backup restore tunnel-restart tunnel-status
 
-# Default target
+COMPOSE ?= docker compose
+
 help:
 	@echo "Drop Go Files - Available Commands"
 	@echo ""
 	@echo "=== Docker Commands ==="
-	@echo "  make up          - Start all services (build if needed)"
-	@echo "  make down        - Stop and remove all services"
-	@echo "  make build       - Build all Docker images"
-	@echo "  make rebuild     - Force rebuild all images and restart"
-	@echo "  make stop        - Stop services without removing"
-	@echo "  make ps          - Show running containers"
+	@echo "  make up            - Start all services (build if needed)"
+	@echo "  make down          - Stop and remove all services"
+	@echo "  make build         - Build all Docker images"
+	@echo "  make rebuild       - Force rebuild all images and restart"
+	@echo "  make stop          - Stop services without removing"
+	@echo "  make ps            - Show running containers"
 	@echo ""
 	@echo "=== Logs ==="
-	@echo "  make logs        - Follow logs from all services"
+	@echo "  make logs          - Follow logs from all services"
 	@echo "  make logs-backend  - Follow backend logs only"
 	@echo "  make logs-frontend - Follow frontend logs only"
+	@echo "  make logs-tunnel   - Follow Cloudflare Tunnel logs only"
 	@echo ""
 	@echo "=== Shell Access ==="
 	@echo "  make shell-backend  - Open shell in backend container"
 	@echo "  make shell-frontend - Open shell in frontend container"
+	@echo "  make shell-tunnel   - Open shell in cloudflared container"
+	@echo ""
+	@echo "=== Tunnel ==="
+	@echo "  make tunnel-status  - Show tunnel container status"
+	@echo "  make tunnel-restart - Restart tunnel container"
 	@echo ""
 	@echo "=== Data Management ==="
-	@echo "  make backup      - Backup uploads to backup.tar.gz"
-	@echo "  make restore     - Restore uploads from backup.tar.gz"
+	@echo "  make backup        - Backup uploads to backup.tar.gz"
+	@echo "  make restore       - Restore uploads from backup.tar.gz"
 	@echo ""
 	@echo "=== Development ==="
-	@echo "  make dev         - Run both services locally (no Docker)"
-	@echo "  make dev-backend - Run backend locally"
-	@echo "  make dev-frontend - Run frontend locally"
+	@echo "  make dev           - Run both services locally (no Docker)"
+	@echo "  make dev-backend   - Run backend locally"
+	@echo "  make dev-frontend  - Run frontend locally"
 	@echo ""
 	@echo "=== Cleanup ==="
-	@echo "  make clean       - Remove containers, images (keeps uploads)"
+	@echo "  make clean         - Remove containers, images (keeps uploads)"
+	@echo "  make clean-all     - Remove everything including uploads"
 
 # ============ Docker Commands ============
 
-# Start all services
 up:
-	docker-compose up -d
+	$(COMPOSE) up -d
 	@echo ""
-	@echo "Services started! Access the app at http://localhost:8080"
+	@echo "Services started!"
+	@echo "If ports are exposed: http://localhost:8080"
+	@echo "If using Cloudflare Tunnel: https://go.odatly.uz"
 
-# Stop and remove services
 down:
-	docker-compose down
+	$(COMPOSE) down
 
-# Build images
 build:
-	docker-compose build
+	$(COMPOSE) build
 
-# Force rebuild and restart
 rebuild:
-	docker-compose down
-	docker-compose build --no-cache
-	docker-compose up -d
+	$(COMPOSE) down
+	$(COMPOSE) build --no-cache
+	$(COMPOSE) up -d
 	@echo ""
-	@echo "Services rebuilt and started! Access the app at http://localhost:8080"
+	@echo "Services rebuilt and started!"
+	@echo "If ports are exposed: http://localhost:8080"
+	@echo "If using Cloudflare Tunnel: https://go.odatly.uz"
 
-# Stop without removing
 stop:
-	docker-compose stop
+	$(COMPOSE) stop
 
-# Show running containers
 ps:
-	docker-compose ps
+	$(COMPOSE) ps
 
 # ============ Logs ============
 
 logs:
-	docker-compose logs -f
+	$(COMPOSE) logs -f
 
 logs-backend:
-	docker-compose logs -f backend
+	$(COMPOSE) logs -f backend
 
 logs-frontend:
-	docker-compose logs -f frontend
+	$(COMPOSE) logs -f frontend
+
+logs-tunnel:
+	$(COMPOSE) logs -f cloudflared
 
 # ============ Shell Access ============
 
 shell-backend:
-	docker-compose exec backend sh
+	$(COMPOSE) exec backend sh
 
 shell-frontend:
-	docker-compose exec frontend sh
+	$(COMPOSE) exec frontend sh
+
+shell-tunnel:
+	$(COMPOSE) exec cloudflared sh
+
+# ============ Tunnel Helpers ============
+
+tunnel-status:
+	$(COMPOSE) ps cloudflared
+
+tunnel-restart:
+	$(COMPOSE) restart cloudflared
+	@echo "Tunnel restarted."
 
 # ============ Development (Local) ============
 
@@ -119,10 +142,10 @@ restore:
 # ============ Cleanup ============
 
 clean:
-	docker-compose down --rmi all
+	$(COMPOSE) down --rmi all
 	@echo "Cleaned up containers and images (uploads preserved in ./data/uploads)"
 
 clean-all:
-	docker-compose down --rmi all
+	$(COMPOSE) down --rmi all
 	rm -rf data/uploads/*
 	@echo "Cleaned up everything including uploads"
