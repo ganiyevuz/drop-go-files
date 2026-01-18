@@ -4,11 +4,9 @@ import { UploadFile, UploadStatus } from '@/types/upload';
 
 // Use window.location to determine the backend URL
 const getBackendUrl = () => {
-  // In production (Docker), backend is on port 1080
-  // In development, Vite proxy handles it
   if (typeof window !== 'undefined') {
     const hostname = window.location.hostname;
-    return `http://${hostname}:1080`;
+    return `http://${hostname}`;
   }
   return 'http://localhost:1080';
 };
